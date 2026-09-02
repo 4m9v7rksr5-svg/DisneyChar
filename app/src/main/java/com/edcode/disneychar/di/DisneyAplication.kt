@@ -1,8 +1,8 @@
-package com.edcode.disneychar
+package com.edcode.disneychar.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class hiltApp: Application() {
+class DisneyAplication: Application() {
 }

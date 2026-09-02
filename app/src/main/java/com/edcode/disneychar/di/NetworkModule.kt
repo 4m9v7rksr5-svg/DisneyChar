@@ -1,5 +1,6 @@
-package com.edcode.disneychar
+package com.edcode.disneychar.di
 
+import com.edcode.disneychar.models.DisneyChar
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +21,12 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideDisneyChar(retrofit: Retrofit): DisneyChar {
+        return retrofit.create(DisneyChar::class.java)
+    }
+
+
 }
