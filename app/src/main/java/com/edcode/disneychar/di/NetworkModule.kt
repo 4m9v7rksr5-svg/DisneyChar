@@ -27,6 +27,5 @@ object NetworkModule {
     fun provideDisneyChar(retrofit: Retrofit): DisneyChar {
         return retrofit.create(DisneyChar::class.java)
     }
-
-
 }
+

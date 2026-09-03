@@ -1,4 +1,4 @@
-package com.edcode.disneychar
+package com.edcode.disneychar.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -44,7 +44,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.edcode.disneychar.models.DisneyCharacter
+import com.edcode.disneychar.domain.DisneyCharacter
 import com.edcode.disneychar.ui.theme.DisneyCharTheme
 import dagger.hilt.android.AndroidEntryPoint
 

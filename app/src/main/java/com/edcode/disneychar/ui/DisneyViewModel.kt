@@ -1,18 +1,18 @@
-package com.edcode.disneychar
+package com.edcode.disneychar.ui
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edcode.disneychar.models.DisneyChar
-import com.edcode.disneychar.models.DisneyCharacter
+import com.edcode.disneychar.domain.DisneyCharUseCase
+import com.edcode.disneychar.domain.DisneyCharacter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DisneyViewModel @Inject constructor(
-    private val disneyChar: DisneyChar
+    private val getCharacterUseCase: DisneyCharUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf<List<DisneyCharacter>>(emptyList())
@@ -23,13 +23,14 @@ class DisneyViewModel @Inject constructor(
     }
 
     private fun setFavorites()
-    {}
+    {
+    }
 
     private fun getCharacters() {
         viewModelScope.launch {
             try {
-                val response = disneyChar.getCharacters()
-                _state.value = response.data.sortedBy { it.name }
+                val response = getCharacterUseCase.invoke()
+                _state.value = response
             } catch (e: Exception) {
                 e.printStackTrace()
             }
