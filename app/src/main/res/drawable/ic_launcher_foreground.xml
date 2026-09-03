@@ -1,30 +1,30 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="#000000">
+  <group android:scaleX="0.58"
+      android:scaleY="0.58"
+      android:translateX="201.6"
+      android:translateY="201.6">
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:fillColor="@android:color/white"
+        android:pathData="M401,840L401,760L476,760L461,605Q441,603 420.5,601.5Q400,600 380,600Q368,600 356,600Q344,600 332,602L359,711L282,730L254,617Q224,625 195,635Q166,645 137,657L104,584Q136,570 168,558.5Q200,547 234,539L190,360Q144,356 112,322Q80,288 80,240Q80,190 115,155Q150,120 200,120Q250,120 285,155Q320,190 320,240Q320,271 306,296.5Q292,322 268,339L313,524Q330,522 346.5,521Q363,520 380,520Q398,520 416,521Q434,522 452,524L443,434Q407,423 383.5,392Q360,361 360,320Q360,270 395,235Q430,200 480,200Q530,200 565,235Q600,270 600,320Q600,358 578.5,388.5Q557,419 523,432L534,536Q566,542 598.5,550.5Q631,559 663,568L696,342Q670,326 655,299Q640,272 640,240Q640,190 675,155Q710,120 760,120Q810,120 845,155Q880,190 880,240Q880,286 850.5,319.5Q821,353 776,359L742,588Q767,593 791.5,596.5Q816,600 842,600L842,680Q813,680 785.5,677Q758,674 730,669L721,726L642,714L651,649Q624,641 597.5,633.5Q571,626 543,620L557,760L641,760L641,840L401,840ZM508.5,348.5Q520,337 520,320Q520,303 508.5,291.5Q497,280 480,280Q463,280 451.5,291.5Q440,303 440,320Q440,337 451.5,348.5Q463,360 480,360Q497,360 508.5,348.5ZM228.5,268.5Q240,257 240,240Q240,223 228.5,211.5Q217,200 200,200Q183,200 171.5,211.5Q160,223 160,240Q160,257 171.5,268.5Q183,280 200,280Q217,280 228.5,268.5ZM788.5,268.5Q800,257 800,240Q800,223 788.5,211.5Q777,200 760,200Q743,200 731.5,211.5Q720,223 720,240Q720,257 731.5,268.5Q743,280 760,280Q777,280 788.5,268.5ZM480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320Q480,320 480,320ZM200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240Q200,240 200,240ZM760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Q760,240 760,240Z"/>
+  </group>
 </vector>

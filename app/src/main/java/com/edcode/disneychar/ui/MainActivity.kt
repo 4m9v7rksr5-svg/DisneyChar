@@ -1,11 +1,14 @@
 package com.edcode.disneychar.ui
 
+import com.edcode.disneychar.R
+import androidx.compose.ui.res.painterResource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -163,8 +167,9 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // AsyncImage de Coil gestiona la carga de la URL automáticamente
             AsyncImage(
+                placeholder = painterResource(R.drawable.placeholder),
+                error = painterResource(R.drawable.placeholder),
                 model = character.imageUrl,
                 contentDescription = character.name,
                 modifier = Modifier
@@ -173,15 +178,25 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
                 contentScale = ContentScale.Crop
             )
             Column(
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp, end = 8.dp)
             ) {
                 Text(
                     text = character.name,
                     style = MaterialTheme.typography.titleLarge
                 )
+
                 if (character.films.isNotEmpty()) {
                     Text(
-                        text = "Films: ${character.films.take(2).joinToString(", ")}",
+                        text = "Films: ${character.films.take(1).joinToString(", ")}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                else if (character.tvShows.isNotEmpty()) {
+                    Text(
+                        text = "TV Shows: ${character.tvShows.take(1).joinToString(", ")}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -191,7 +206,8 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
                 Icon(
                     imageVector = if (character.isFavorite) Icons.Default.Star else Icons.Outlined.Star,
                     contentDescription = "Favorite",
-                    tint = if (character.isFavorite) Color(0xFFFFD700) else Color.Gray
+                    tint = if (character.isFavorite) Color(0xFFFFD700) else Color.Gray,
+//                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
         }
