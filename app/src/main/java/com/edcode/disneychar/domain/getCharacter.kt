@@ -4,7 +4,13 @@ import javax.inject.Inject
 
 class DisneyCharUseCase @Inject constructor(private val repository: DisneyRepository) {
 
-    operator suspend fun invoke() =
+    suspend operator fun invoke() =
         repository.getCharacters()
     }
+
+class SaveFavoriteUseCase @Inject constructor(private val repository: DisneyRepository) {
+
+}
+
+class GetFavoritesUseCase @Inject constructor(private val repository: DisneyRepository) {}
 

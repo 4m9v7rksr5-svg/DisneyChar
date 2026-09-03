@@ -1,12 +1,1 @@
-package com.edcode.disneychar.models
-
-import retrofit2.http.GET
-import retrofit2.http.Query
-
-interface DisneyChar {
-    @GET("character")
-    suspend fun getCharacters(
-        @Query("page") page: Int = 1,
-        @Query("pageSize") pageSize: Int = 50
-    ): CharacterResponse
-}
+// Deleted - moved to data.remote

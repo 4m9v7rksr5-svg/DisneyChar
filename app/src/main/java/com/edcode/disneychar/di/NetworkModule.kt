@@ -1,6 +1,6 @@
 package com.edcode.disneychar.di
 
-import com.edcode.disneychar.models.DisneyChar
+import com.edcode.disneychar.data.remote.DisneyChar
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -30,7 +30,8 @@ fun DisneyCharacterEntity.toDomain() = DisneyCharacter(
     videoGames = videoGames,
     allies = allies,
     enemies = enemies,
-    sourceUrl = sourceUrl
+    sourceUrl = sourceUrl,
+    isFavorite = false
 )
 
 fun DisneyCharacter.toEntity() = DisneyCharacterEntity(

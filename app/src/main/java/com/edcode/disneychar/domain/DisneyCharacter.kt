@@ -11,5 +11,6 @@ data class DisneyCharacter(
     val videoGames: List<String>,
     val allies: List<String>,
     val enemies: List<String>,
-    val sourceUrl: String?
+    val sourceUrl: String?,
+    val isFavorite: Boolean
 )

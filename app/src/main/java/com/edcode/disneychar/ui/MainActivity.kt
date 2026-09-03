@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -34,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -130,16 +133,21 @@ fun DisneyScreen(
     } else {
         LazyColumn(modifier = modifier.fillMaxSize()) {
             items(characters) { character ->
-                CharacterItem(character = character){
-                    navController.navigate("disneyDetail")
+
+                CharacterItem(
+                    character = character,
+                    onStarClick = { viewModel.saveFavorite(it)}  ,
+                    route={    navController.navigate("disneyDetail")}
+                )
+
                 }
             }
         }
     }
-}
+
 
 @Composable
-fun CharacterItem(character: DisneyCharacter, route: () -> Unit) {
+fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: () -> Unit) {
 
     Card(
         modifier = Modifier
@@ -178,6 +186,13 @@ fun CharacterItem(character: DisneyCharacter, route: () -> Unit) {
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
+            }
+            IconButton(onClick = {  onStarClick(character.id) }) {
+                Icon(
+                    imageVector = if (character.isFavorite) Icons.Default.Star else Icons.Outlined.Star,
+                    contentDescription = "Favorite",
+                    tint = if (character.isFavorite) Color(0xFFFFD700) else Color.Gray
+                )
             }
         }
     }
