@@ -22,15 +22,18 @@ class DisneyViewModel @Inject constructor(
         getCharacters()
     }
 
+    private fun setFavorites()
+    {}
+
     private fun getCharacters() {
         viewModelScope.launch {
             try {
                 val response = disneyChar.getCharacters()
-                _state.value = response.data
+                _state.value = response.data.sortedBy { it.name }
             } catch (e: Exception) {
-                // Handle error
                 e.printStackTrace()
             }
         }
     }
+
 }

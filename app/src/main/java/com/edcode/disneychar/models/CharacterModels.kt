@@ -19,5 +19,6 @@ data class DisneyCharacter(
     @SerializedName("name") val name: String,
     @SerializedName("imageUrl") val imageUrl: String?,
     @SerializedName("films") val films: List<String>,
+    @SerializedName("tvShows") val tvshows: List<String>,
     @SerializedName("sourceUrl") val sourceUrl: String?
 )
