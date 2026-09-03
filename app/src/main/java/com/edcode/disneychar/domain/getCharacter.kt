@@ -8,9 +8,4 @@ class DisneyCharUseCase @Inject constructor(private val repository: DisneyReposi
         repository.getCharacters()
     }
 
-class SaveFavoriteUseCase @Inject constructor(private val repository: DisneyRepository) {
-
-}
-
-class GetFavoritesUseCase @Inject constructor(private val repository: DisneyRepository) {}
 

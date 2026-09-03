@@ -26,10 +26,11 @@ class DisneyViewModel @Inject constructor(
         getCharacters()
     }
 
-    fun saveFavorite(id:Int) {
-
+    fun saveFavorite(id: Int) {
+        viewModelScope.launch {
+            saveFavoriteUseCase(id)
+        }
     }
-
 
     private fun getCharacters() {
         viewModelScope.launch {

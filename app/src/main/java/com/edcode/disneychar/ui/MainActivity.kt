@@ -7,6 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,10 +39,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -54,6 +61,7 @@ import coil.compose.AsyncImage
 import com.edcode.disneychar.domain.DisneyCharacter
 import com.edcode.disneychar.ui.theme.DisneyCharTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
@@ -65,29 +73,32 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val canNavigateBack = navBackStackEntry?.destination?.route != "disneyChar"
+            val currentRoute = navBackStackEntry?.destination?.route
+            val canNavigateBack = currentRoute != "disneyChar" && currentRoute != "splash"
+            val showTopBar = currentRoute != "splash"
 
                 DisneyCharTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-
-                        CenterAlignedTopAppBar(
-                            title = { Text("Disney Characters") },
-                            navigationIcon = {
-                                if (canNavigateBack) {
-                                    IconButton(onClick = { navController.navigateUp() }) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Back"
-                                        )
+                        if (showTopBar) {
+                            CenterAlignedTopAppBar(
+                                title = { Text("Disney Characters") },
+                                navigationIcon = {
+                                    if (canNavigateBack) {
+                                        IconButton(onClick = { navController.navigateUp() }) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                contentDescription = "Back"
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                                },
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
                             )
-                        )
+                        }
                     }
                 ) { innerPadding ->
                     NavigationRoute(modifier = Modifier.padding(innerPadding),navController = navController)
@@ -98,8 +109,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationRoute(modifier: Modifier = Modifier,navController: NavHostController) {
     val viewModel: DisneyViewModel = hiltViewModel()
-    NavHost(navController = navController, startDestination = "disneyChar")
+    NavHost(navController = navController, startDestination = "splash")
     {
+        composable("splash") {
+            SplashScreen(onAnimationFinished = {
+                navController.navigate("disneyChar") {
+                    popUpTo("splash") { inclusive = true }
+                }
+            })
+        }
         composable("disneyChar") {
             DisneyScreen(modifier = modifier,viewModel = viewModel,navController)
         }
@@ -108,6 +126,35 @@ fun NavigationRoute(modifier: Modifier = Modifier,navController: NavHostControll
         }
            }
         }
+}
+
+@Composable
+fun SplashScreen(onAnimationFinished: () -> Unit) {
+    val scale = remember { Animatable(0f) }
+
+    LaunchedEffect(key1 = true) {
+        scale.animateTo(
+            targetValue = 0.8f,
+            animationSpec = tween(durationMillis = 1000)
+        )
+        delay(1500)
+        onAnimationFinished()
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Image(
+            painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .size(200.dp)
+                .scale(scale.value)
+        )
+    }
 }
 
 @Composable
@@ -189,7 +236,7 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
 
                 if (character.films.isNotEmpty()) {
                     Text(
-                        text = "Films: ${character.films.take(1).joinToString(", ")}",
+                        text = "Films: ${character.films.take(1).joinToString(",")}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
