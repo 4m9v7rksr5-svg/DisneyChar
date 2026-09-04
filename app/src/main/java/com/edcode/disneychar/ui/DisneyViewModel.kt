@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edcode.disneychar.ConnectivityManager
 import com.edcode.disneychar.domain.DisneyCharUseCase
 import com.edcode.disneychar.domain.DisneyCharacter
 import com.edcode.disneychar.domain.GetFavoritesUseCase
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class DisneyViewModel @Inject constructor(
     private val getCharacterUseCase: DisneyCharUseCase,
     private val saveFavoriteUseCase: SaveFavoriteUseCase,
-    private val getFavoritesUseCase: GetFavoritesUseCase
+    private val getFavoritesUseCase: GetFavoritesUseCase,
+    private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
 
     private val _state = mutableStateOf<List<DisneyCharacter>>(emptyList())
@@ -32,14 +34,23 @@ class DisneyViewModel @Inject constructor(
         }
     }
 
+    fun getFavorite() {
+        viewModelScope.launch {
+            getFavoritesUseCase().collect {
+                println("Data  $it")
+             //   _state.value = it
+            }
+        }
+    }
+
     private fun getCharacters() {
         viewModelScope.launch {
-            try {
-                getCharacterUseCase.invoke().collect { characters ->
-                    _state.value = characters
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            val isOnline = connectivityManager.isOnline()
+
+            if (isOnline) {
+                getCharacterUseCase().collect { _state.value = it }
+            } else {
+                getFavoritesUseCase().collect { _state.value = it }
             }
         }
     }

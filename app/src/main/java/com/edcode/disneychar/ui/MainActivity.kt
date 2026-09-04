@@ -1,14 +1,14 @@
 package com.edcode.disneychar.ui
 
-import com.edcode.disneychar.R
-import androidx.compose.ui.res.painterResource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
@@ -28,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +37,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,9 +55,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.edcode.disneychar.R
 import com.edcode.disneychar.domain.DisneyCharacter
 import com.edcode.disneychar.ui.theme.DisneyCharTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @AndroidEntryPoint
@@ -65,49 +72,100 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val canNavigateBack = navBackStackEntry?.destination?.route != "disneyChar"
+            val currentRoute = navBackStackEntry?.destination?.route
+            val canNavigateBack = currentRoute != "disneyChar" && currentRoute != "splash"
+            val showTopBar = currentRoute != "splash"
+            val viewModel: DisneyViewModel = hiltViewModel()//Prueba de comportamiento
 
-                DisneyCharTheme {
+            DisneyCharTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-
-                        CenterAlignedTopAppBar(
-                            title = { Text("Disney Characters") },
-                            navigationIcon = {
-                                if (canNavigateBack) {
-                                    IconButton(onClick = { navController.navigateUp() }) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Back"
-                                        )
+                        if (showTopBar) {
+                            CenterAlignedTopAppBar(
+                                title = { Text("Disney Characters") },
+                                navigationIcon = {
+                                    if (canNavigateBack) {
+                                        IconButton(onClick = { navController.navigateUp() }) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                contentDescription = "Back"
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                                },
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
                             )
-                        )
+                        }
+                    },
+                    floatingActionButton = {
+                        if (currentRoute == "disneyChar") {
+                            FloatingActionButton(
+                                onClick = { viewModel.getFavorite()},
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search"
+                                )
+                            }
+                        }
                     }
                 ) { innerPadding ->
-                    NavigationRoute(modifier = Modifier.padding(innerPadding),navController = navController)
+                    NavigationRoute(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController
+                    )
+                }
             }
         }
     }
 }
+
 @Composable
-fun NavigationRoute(modifier: Modifier = Modifier,navController: NavHostController) {
+fun NavigationRoute(modifier: Modifier = Modifier, navController: NavHostController) {
     val viewModel: DisneyViewModel = hiltViewModel()
-    NavHost(navController = navController, startDestination = "disneyChar")
-    {
+    NavHost(navController = navController, startDestination = "splash") {
+        composable("splash") {
+            SplashScreen(onAnimationFinished = {
+                navController.navigate("disneyChar") {
+                    popUpTo("splash") { inclusive = true }
+                }
+            })
+        }
         composable("disneyChar") {
-            DisneyScreen(modifier = modifier,viewModel = viewModel,navController)
+            DisneyScreen(modifier = modifier, viewModel = viewModel, navController = navController)
         }
         composable("disneyDetail") {
             DisneyDetailScreen(navController = navController)
         }
-           }
-        }
+    }
+}
+
+@Composable
+fun SplashScreen(onAnimationFinished: () -> Unit) {
+    val scale = remember { Animatable(0f) }
+
+    LaunchedEffect(key1 = true) {
+        scale.animateTo(
+            targetValue = 0.8f,
+            animationSpec = tween(durationMillis = 1000)
+        )
+        delay(1500.milliseconds)
+        onAnimationFinished()
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        CircularProgressIndicator()
+    }
 }
 
 @Composable
