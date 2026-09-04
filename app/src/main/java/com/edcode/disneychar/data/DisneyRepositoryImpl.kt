@@ -39,8 +39,6 @@ class DisneyRepositoryImpl @Inject constructor(
             }
         }
 
-
-
     override suspend fun getCharacter(id: Int): Flow<DisneyCharacter> {
         return dao.getCharacterById(id).map { entity ->
             entity.toDomain()

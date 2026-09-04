@@ -1,7 +1,5 @@
 package com.edcode.disneychar.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edcode.disneychar.ConnectivityManager
@@ -25,14 +23,14 @@ class DisneyViewModel @Inject constructor(
     private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
 
-    private val _state = mutableStateOf<List<DisneyCharacter>>(emptyList())
-    val state: State<List<DisneyCharacter>> = _state
+    private val _state = MutableStateFlow<List<DisneyCharacter>>(emptyList())
+    val state: StateFlow<List<DisneyCharacter>> = _state
 
-    private val _characterState = mutableStateOf<DisneyCharacter?>(null)
-    val characterState: State<DisneyCharacter?> = _characterState
+    private val _characterState = MutableStateFlow<DisneyCharacter?>(null)
+    val characterState: StateFlow<DisneyCharacter?> = _characterState
 
-    private val _isOnline = mutableStateOf(true)
-    val isOnline: State<Boolean> = _isOnline
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline: StateFlow<Boolean> = _isOnline
 
     private val _currentTittle = MutableStateFlow("")
     val currentTittle: StateFlow<String> = _currentTittle
@@ -50,7 +48,7 @@ class DisneyViewModel @Inject constructor(
     fun getCharacter(id: Int) {
         viewModelScope.launch {
             getSingleCharacterUseCase(id).collect {
-                _characterState.value = it
+                _characterState.emit(it)
             }
         }
     }
@@ -72,12 +70,12 @@ class DisneyViewModel @Inject constructor(
 
     private fun getCharacters() {
         viewModelScope.launch {
-            _isOnline.value = connectivityManager.isOnline()
+            _isOnline.emit(connectivityManager.isOnline())
 
             if (_isOnline.value) {
-                getCharacterUseCase().collect { _state.value = it }
+                getCharacterUseCase().collect { _state.emit(it) }
             } else {
-                getFavoritesUseCase().collect { _state.value = it }
+                getFavoritesUseCase().collect { _state.emit(it) }
             }
         }
     }

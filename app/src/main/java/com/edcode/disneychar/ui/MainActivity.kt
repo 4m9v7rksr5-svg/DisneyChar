@@ -193,7 +193,7 @@ fun DisneyDetailScreen(
         navController.popBackStack()
     }
 
-    val character by viewModel.characterState
+    val character by viewModel.characterState.collectAsState()
 
     LaunchedEffect(id) {
         viewModel.getCharacter(id)
@@ -216,8 +216,8 @@ fun DisneyScreen(
     viewModel: DisneyViewModel,
     navController: NavHostController,
 ) {
-    val characters by viewModel.state
-    val isOnline by viewModel.isOnline
+    val characters by viewModel.state.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
 
     if (characters.isEmpty()) {
         if (isOnline) {
