@@ -79,7 +79,7 @@ fun CharacterItem(character: DisneyCharacter, onStarClick: (Int) -> Unit, route:
             }
             IconButton(onClick = { onStarClick(character.id) }) {
                 Icon(
-                    imageVector = if (character.isFavorite) Icons.Default.Star else Icons.Outlined.Star,
+                    imageVector = if (character.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
                     contentDescription = "Favorite",
                     tint = if (character.isFavorite) Color(0xFFFFD700) else Color.Gray,
                 )

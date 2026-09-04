@@ -20,8 +20,8 @@ class DisneyRepositoryImpl @Inject constructor(
     private val favoritesDataStore: FavoritesDataStore,
     private val connectivityManager: ConnectivityManager
 ) : DisneyRepository {
-    override suspend fun getCharacters(): Flow<List<DisneyCharacter>> {
-        if (connectivityManager.isOnline()) {
+    override suspend fun getCharacters(query: String): Flow<List<DisneyCharacter>> {
+        if (connectivityManager.isOnline() && query.isEmpty()) {
             try {
                 val response = api.getCharacters(1, 50)
                 val entities = response.data.map { it.toDomainDto().toEntity() }
@@ -31,8 +31,14 @@ class DisneyRepositoryImpl @Inject constructor(
             }
         }
 
+        val charactersFlow = if (query.isEmpty()) {
+            dao.getAllCharacters()
+        } else {
+            dao.searchCharacters(query)
+        }
+
         return combine(
-            dao.getAllCharacters(),
+            charactersFlow,
             favoritesDataStore.favoriteIds
         ) { entities, favoriteIds ->
             val domainList = entities.map { entity ->

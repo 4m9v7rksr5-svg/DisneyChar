@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.edcode.disneychar.ui.DisneyViewModel
 import com.edcode.disneychar.ui.screens.DisneyDetailScreen
 import com.edcode.disneychar.ui.screens.DisneyScreen
+import com.edcode.disneychar.ui.screens.FavoritesScreen
 import com.edcode.disneychar.ui.screens.SplashScreen
 
 @Composable
@@ -28,6 +29,9 @@ fun NavigationRoute(
         }
         composable("disneyChar") {
             DisneyScreen(modifier = modifier, viewModel = viewModel, navController = navController)
+        }
+        composable("favorites") {
+            FavoritesScreen(modifier = modifier, viewModel = viewModel, navController = navController)
         }
         composable("disneyDetail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
