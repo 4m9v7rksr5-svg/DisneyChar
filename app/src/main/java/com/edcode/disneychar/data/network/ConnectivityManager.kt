@@ -1,4 +1,4 @@
-package com.edcode.disneychar
+package com.edcode.disneychar.data.network
 
 import android.content.Context
 import android.net.NetworkCapabilities

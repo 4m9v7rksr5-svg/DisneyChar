@@ -2,11 +2,10 @@ package com.edcode.disneychar.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edcode.disneychar.ConnectivityManager
+import com.edcode.disneychar.data.network.ConnectivityManager
 import com.edcode.disneychar.domain.DisneyCharSingleUseCase
 import com.edcode.disneychar.domain.DisneyCharUseCase
 import com.edcode.disneychar.domain.DisneyCharacter
-import com.edcode.disneychar.domain.GetFavoritesUseCase
 import com.edcode.disneychar.domain.SaveFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ import javax.inject.Inject
 class DisneyViewModel @Inject constructor(
     private val getCharacterUseCase: DisneyCharUseCase,
     private val saveFavoriteUseCase: SaveFavoriteUseCase,
-    private val getFavoritesUseCase: GetFavoritesUseCase,
     private val getSingleCharacterUseCase: DisneyCharSingleUseCase,
     private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
@@ -62,13 +60,7 @@ class DisneyViewModel @Inject constructor(
     private fun getCharacters() {
         viewModelScope.launch {
             _isOnline.emit(connectivityManager.isOnline())
-
-            if (_isOnline.value) {
-                getCharacterUseCase().collect { _state.emit(it) }
-            } else {
-                getFavoritesUseCase().collect { _state.emit(it) }
-            }
+            getCharacterUseCase().collect { _state.emit(it) }
         }
     }
-
 }

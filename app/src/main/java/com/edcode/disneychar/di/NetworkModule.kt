@@ -1,7 +1,7 @@
 package com.edcode.disneychar.di
 
 import android.content.Context
-import com.edcode.disneychar.ConnectivityManager
+import com.edcode.disneychar.data.network.ConnectivityManager
 import com.edcode.disneychar.data.remote.DisneyChar
 import dagger.Module
 import dagger.Provides
