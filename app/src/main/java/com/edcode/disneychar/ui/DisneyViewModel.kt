@@ -59,15 +59,6 @@ class DisneyViewModel @Inject constructor(
         }
     }
 
-    fun getFavorite() {
-        viewModelScope.launch {
-            getFavoritesUseCase().collect {
-                println("Data  $it")
-             //   _state.value = it
-            }
-        }
-    }
-
     private fun getCharacters() {
         viewModelScope.launch {
             _isOnline.emit(connectivityManager.isOnline())
