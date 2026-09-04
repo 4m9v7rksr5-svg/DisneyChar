@@ -21,6 +21,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
@@ -67,30 +68,36 @@ class MainActivity : ComponentActivity() {
                         if (showTopBar) {
                             if (isSearchActive && currentRoute == "disneyChar") {
                                 SearchBar(
-                                    query = searchQuery,
-                                    onQueryChange = { viewModel.onSearchQueryChanged(it) },
-                                    onSearch = { },
-                                    active = true,
-                                    onActiveChange = { if (!it) viewModel.toggleSearch() },
-                                    placeholder = { Text("A quien buscas ?...") },
-                                    leadingIcon = {
-                                        IconButton(onClick = { viewModel.toggleSearch() }) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = "Back"
-                                            )
-                                        }
-                                    },
-                                    trailingIcon = {
-                                        if (searchQuery.isNotEmpty()) {
-                                            IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Close,
-                                                    contentDescription = "Clear"
-                                                )
+                                    inputField = {
+                                        SearchBarDefaults.InputField(
+                                            query = searchQuery,
+                                            onQueryChange = { query -> viewModel.onSearchQueryChanged(query) },
+                                            onSearch = { },
+                                            expanded = true,
+                                            onExpandedChange = { expanded -> if (!expanded) viewModel.toggleSearch() },
+                                            placeholder = { Text("A quien buscas ?...") },
+                                            leadingIcon = {
+                                                IconButton(onClick = { viewModel.toggleSearch() }) {
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                        contentDescription = "Back"
+                                                    )
+                                                }
+                                            },
+                                            trailingIcon = {
+                                                if (searchQuery.isNotEmpty()) {
+                                                    IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Close,
+                                                            contentDescription = "Clear"
+                                                        )
+                                                    }
+                                                }
                                             }
-                                        }
+                                        )
                                     },
+                                    expanded = true,
+                                    onExpandedChange = { expanded -> if (!expanded) viewModel.toggleSearch() },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     val characters by viewModel.state.collectAsState()
@@ -105,7 +112,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             } else {
                                 CenterAlignedTopAppBar(
-                                    title = { Text(viewModel.currentTittle.collectAsState().value) },
+                                    title = { Text(viewModel.currentTitle.collectAsState().value) },
                                     navigationIcon = {
                                         if (canNavigateBack) {
                                             IconButton(onClick = { navController.navigateUp() }) {

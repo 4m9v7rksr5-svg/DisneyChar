@@ -44,8 +44,8 @@ class DisneyViewModel @Inject constructor(
     private val _isOnline = MutableStateFlow(true)
     val isOnline: StateFlow<Boolean> = _isOnline
 
-    private val _currentTittle = MutableStateFlow("Disney Characters")
-    val currentTittle: StateFlow<String> = _currentTittle
+    private val _currentTitle = MutableStateFlow("Disney Characters")
+    val currentTitle: StateFlow<String> = _currentTitle
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -88,9 +88,9 @@ class DisneyViewModel @Inject constructor(
         }
     }
 
-    fun setScreenTittle(tittle: String) {
+    fun setScreenTitle(title: String) {
         viewModelScope.launch {
-            _currentTittle.emit(tittle)
+            _currentTitle.emit(title)
         }
     }
 

@@ -22,7 +22,7 @@ fun FavoritesScreen(
     val favorites by viewModel.favoritesState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.setScreenTittle("Favoritos")
+        viewModel.setScreenTitle("Favoritos")
     }
 
     if (favorites.isEmpty()) {

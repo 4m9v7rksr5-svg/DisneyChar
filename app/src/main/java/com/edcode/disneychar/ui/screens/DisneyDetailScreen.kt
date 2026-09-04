@@ -32,7 +32,7 @@ fun DisneyDetailScreen(
     }
 
     LaunchedEffect(character) {
-        viewModel.setScreenTittle(" ${character?.name ?: "Detail Screen"}")
+        viewModel.setScreenTitle(" ${character?.name ?: "Detail Screen"}")
     }
 
     character?.let {
