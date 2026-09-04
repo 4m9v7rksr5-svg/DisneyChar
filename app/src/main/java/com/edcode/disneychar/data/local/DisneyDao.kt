@@ -14,6 +14,9 @@ interface DisneyDao {
     @Query("SELECT * FROM characters WHERE name LIKE '%' || :query || '%'")
     fun searchCharacters(query: String): Flow<List<DisneyCharacterEntity>>
 
+    @Query("SELECT * FROM characters WHERE id = :id")
+    fun getCharacterById(id: Int): Flow<DisneyCharacterEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacters(characters: List<DisneyCharacterEntity>)
 

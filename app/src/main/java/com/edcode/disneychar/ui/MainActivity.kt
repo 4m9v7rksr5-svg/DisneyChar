@@ -21,6 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -41,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,10 +58,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import com.edcode.disneychar.R
 import com.edcode.disneychar.domain.DisneyCharacter
@@ -80,13 +87,14 @@ class MainActivity : ComponentActivity() {
             val showTopBar = currentRoute != "splash"
             val viewModel: DisneyViewModel = hiltViewModel()
 
+            viewModel.setScreenTittle("Disney Characters")
             DisneyCharTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         if (showTopBar) {
                             CenterAlignedTopAppBar(
-                                title = { Text("Disney Characters") },
+                                title = { Text(viewModel.currentTittle.collectAsState().value) },
                                 navigationIcon = {
                                     if (canNavigateBack) {
                                         IconButton(onClick = { navController.navigateUp() }) {
@@ -142,8 +150,11 @@ fun NavigationRoute(modifier: Modifier = Modifier, navController: NavHostControl
         composable("disneyChar") {
             DisneyScreen(modifier = modifier, viewModel = viewModel, navController = navController)
         }
-        composable("disneyDetail") {
-            DisneyDetailScreen(navController = navController)
+        composable("disneyDetail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) {backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
+            DisneyDetailScreen(modifier = modifier,navController = navController,id=id, viewModel = viewModel)
         }
     }
 }
@@ -172,12 +183,30 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
 }
 
 @Composable
-fun DisneyDetailScreen(navController: NavHostController) {
+fun DisneyDetailScreen(
+    navController: NavHostController,
+    id: Int,
+    viewModel: DisneyViewModel,
+    modifier: Modifier
+) {
     BackHandler {
         navController.popBackStack()
     }
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Detail Screen")
+
+    val character by viewModel.characterState
+
+    LaunchedEffect(id) {
+        viewModel.getCharacter(id)
+    }
+
+    LaunchedEffect(character) {
+        viewModel.setScreenTittle(" ${character?.name ?: "Detail Screen"}")
+    }
+
+    character?.let{
+        CharacterItemDetails(character = it,modifier)
+    }?: Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 
@@ -206,9 +235,76 @@ fun DisneyScreen(
                 CharacterItem(
                     character = character,
                     onStarClick = { viewModel.saveFavorite(it) },
-                    route = { navController.navigate("disneyDetail") }
+                    route = { navController.navigate("disneyDetail/${character.id}") }
                 )
             }
+        }
+    }
+}
+
+data class CharacterDetailInfo(val title: String, val items: List<String>)
+
+@Composable
+fun CharacterItemDetails(character: DisneyCharacter, modifier: Modifier) {
+    val detailsList = listOf(
+        CharacterDetailInfo("Films", character.films),
+        CharacterDetailInfo("TV Shows", character.tvShows),
+        CharacterDetailInfo("Video Games", character.videoGames),
+        CharacterDetailInfo("Short Films", character.shortFilms),
+        CharacterDetailInfo("Park Attractions", character.parkAttractions),
+        CharacterDetailInfo("Allies", character.allies),
+        CharacterDetailInfo("Enemies", character.enemies)
+    ).filter { it.items.isNotEmpty() }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            placeholder = painterResource(R.drawable.placeholder),
+            error = painterResource(R.drawable.placeholder),
+            model = character.imageUrl,
+            contentDescription = character.name,
+            modifier = Modifier
+                .size(200.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = character.name,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
+            detailsList.forEach { detail ->
+                DetailSection(title = detail.title, items = detail.items)
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailSection(title: String, items: List<String>) {
+    if (items.isNotEmpty()) {
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = items.joinToString(", "),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

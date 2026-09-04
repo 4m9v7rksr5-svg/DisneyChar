@@ -9,6 +9,7 @@ import com.edcode.disneychar.domain.DisneyCharacter
 import com.edcode.disneychar.domain.DisneyRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import com.edcode.disneychar.data.remote.toDomain as toDomainDto
 
@@ -37,6 +38,15 @@ class DisneyRepositoryImpl @Inject constructor(
                 }
             }
         }
+
+
+
+    override suspend fun getCharacter(id: Int): Flow<DisneyCharacter> {
+        return dao.getCharacterById(id).map { entity ->
+            entity.toDomain()
+        }
+    }
+
 
     override suspend fun toggleFavorite(id: Int) {
         favoritesDataStore.toggleFavorite(id) // Llama al DataStore
