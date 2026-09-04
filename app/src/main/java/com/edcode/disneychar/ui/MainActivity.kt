@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            val canNavigateBack = currentRoute != "disneyChar" && currentRoute != "splash"
+            val canNavigateBack = currentRoute?.startsWith("disneyDetail") == true
             val showTopBar = currentRoute != "splash"
             val viewModel: DisneyViewModel = hiltViewModel()
             val isSearchActive by viewModel.isSearchActive.collectAsState()
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                                     onSearch = { },
                                     active = true,
                                     onActiveChange = { if (!it) viewModel.toggleSearch() },
-                                    placeholder = { Text("Search characters...") },
+                                    placeholder = { Text("A quien buscas ?...") },
                                     leadingIcon = {
                                         IconButton(onClick = { viewModel.toggleSearch() }) {
                                             Icon(

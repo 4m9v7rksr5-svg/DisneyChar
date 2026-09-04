@@ -29,7 +29,7 @@ fun DisneyScreen(
 
     LaunchedEffect(isOnline) {
         if (isOnline) {
-            viewModel.setScreenTittle("Disney Characters")
+            viewModel.setScreenTittle("Personajes de Disney")
         } else {
             viewModel.setScreenTittle("Favoritos")
         }
