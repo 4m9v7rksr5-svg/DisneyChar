@@ -7,8 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,7 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -75,7 +78,7 @@ class MainActivity : ComponentActivity() {
             val currentRoute = navBackStackEntry?.destination?.route
             val canNavigateBack = currentRoute != "disneyChar" && currentRoute != "splash"
             val showTopBar = currentRoute != "splash"
-            val viewModel: DisneyViewModel = hiltViewModel()//Prueba de comportamiento
+            val viewModel: DisneyViewModel = hiltViewModel()
 
             DisneyCharTheme {
                 Scaffold(
@@ -103,7 +106,7 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = {
                         if (currentRoute == "disneyChar") {
                             FloatingActionButton(
-                                onClick = { viewModel.getFavorite()},
+                                onClick = { viewModel.getFavorite() },
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 contentColor = MaterialTheme.colorScheme.primary
                             ) {
@@ -169,9 +172,7 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
 }
 
 @Composable
-fun DisneyDetailScreen(navController: NavHostController)
-{
-    // Puedes personalizar la pantalla de detalles aquí
+fun DisneyDetailScreen(navController: NavHostController) {
     BackHandler {
         navController.popBackStack()
     }
@@ -187,38 +188,42 @@ fun DisneyScreen(
     navController: NavHostController,
 ) {
     val characters by viewModel.state
+    val isOnline by viewModel.isOnline
 
     if (characters.isEmpty()) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+        if (isOnline) {
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            EmptyState(
+                message = "Agrega a tus personajes favoritos",
+            )
         }
     } else {
         LazyColumn(modifier = modifier.fillMaxSize()) {
             items(characters) { character ->
-
                 CharacterItem(
                     character = character,
-                    onStarClick = { viewModel.saveFavorite(it)}  ,
-                    route={    navController.navigate("disneyDetail")}
+                    onStarClick = { viewModel.saveFavorite(it) },
+                    route = { navController.navigate("disneyDetail") }
                 )
-
-                }
             }
         }
     }
+}
 
 
 @Composable
-fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: () -> Unit) {
-
+fun CharacterItem(character: DisneyCharacter, onStarClick: (Int) -> Unit, route: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth().clickable{
+            .fillMaxWidth()
+            .clickable {
                 println(character)
                 route.invoke()
-            }
-        ,
+            },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
@@ -251,8 +256,7 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
-                }
-                else if (character.tvShows.isNotEmpty()) {
+                } else if (character.tvShows.isNotEmpty()) {
                     Text(
                         text = "TV Shows: ${character.tvShows.take(1).joinToString(", ")}",
                         style = MaterialTheme.typography.bodyMedium,
@@ -260,12 +264,11 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
                     )
                 }
             }
-            IconButton(onClick = {  onStarClick(character.id) }) {
+            IconButton(onClick = { onStarClick(character.id) }) {
                 Icon(
                     imageVector = if (character.isFavorite) Icons.Default.Star else Icons.Outlined.Star,
                     contentDescription = "Favorite",
                     tint = if (character.isFavorite) Color(0xFFFFD700) else Color.Gray,
-//                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
         }
@@ -273,17 +276,35 @@ fun CharacterItem(character: DisneyCharacter,onStarClick: (Int) -> Unit, route: 
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DisneyCharTheme {
-        Greeting("Android")
+fun EmptyState(
+    message: String,
+    onRetry: (() -> Unit)? = null
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+            Image(
+                painter = painterResource(R.drawable.sad_disney),
+                contentDescription = null,
+                modifier = Modifier.size(120.dp)
+            )
+        Text(
+            text = message,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        if (onRetry != null) {
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Reintentar")
+            }
+        }
     }
 }

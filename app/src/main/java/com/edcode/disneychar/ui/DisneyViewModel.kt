@@ -24,6 +24,9 @@ class DisneyViewModel @Inject constructor(
     private val _state = mutableStateOf<List<DisneyCharacter>>(emptyList())
     val state: State<List<DisneyCharacter>> = _state
 
+    private val _isOnline = mutableStateOf(true)
+    val isOnline: State<Boolean> = _isOnline
+
     init {
         getCharacters()
     }
@@ -45,9 +48,9 @@ class DisneyViewModel @Inject constructor(
 
     private fun getCharacters() {
         viewModelScope.launch {
-            val isOnline = connectivityManager.isOnline()
+            _isOnline.value = connectivityManager.isOnline()
 
-            if (isOnline) {
+            if (_isOnline.value) {
                 getCharacterUseCase().collect { _state.value = it }
             } else {
                 getFavoritesUseCase().collect { _state.value = it }
