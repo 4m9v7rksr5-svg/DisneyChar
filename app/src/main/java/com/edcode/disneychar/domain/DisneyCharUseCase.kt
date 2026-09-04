@@ -8,8 +8,4 @@ class DisneyCharUseCase @Inject constructor(private val repository: DisneyReposi
         repository.getCharacters()
     }
 
-class DisneyCharSingleUseCase @Inject constructor(private val repository: DisneyRepository) {
 
-    suspend operator fun invoke(id: Int) =
-        repository.getCharacter(id)
-}
